@@ -1,0 +1,15 @@
+name: Bug report
+description: Report a problem
+labels: [bug]
+body:
+  - type: textarea
+    id: desc
+    attributes: { label: What happened?, placeholder: Clear steps and what you expected }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Version/commit }
+  - type: textarea
+    id: repro
+    attributes: { label: Reproduction, placeholder: Commands, config, screenshots }
+

@@ -11,16 +11,33 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Play, MoreHorizontal, Gauge, Activity, Server, Router, Container, BarChart3, ShieldCheck, Settings as SettingsIcon, RefreshCcw, Search, Network, Cpu, HardDrive, ListFilter, Globe2, Lock, Eye, EyeOff } from "lucide-react";
+import {
+  Play,
+  MoreHorizontal,
+  Gauge,
+  Activity,
+  Server,
+  Router,
+  Container,
+  BarChart3,
+  ShieldCheck,
+  Settings as SettingsIcon,
+  RefreshCcw,
+  Search,
+  Network,
+  Cpu,
+  HardDrive,
+  ListFilter,
+  Globe2,
+  Lock,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 
 /**
- * Homelabflix — Netflix‑style Homelab Dashboard (Quick‑Config + Settings)
- * ----------------------------------------------------------------------
- * Single‑file React component for rapid testing. Adds:
- *  - Quick setup for 20 popular tools (URL/IP + creds) -> tiles
- *  - Settings page: auto‑refresh toggle, refresh interval, seed data toggle
- *  - "Needs config" overlays and empty states
+ * Homelabflix — Netflix-style Homelab Dashboard (Quick-Config + Settings)
+ * Full-screen + top filters wired (Hosts / Containers / Services).
  */
 
 // ===================== Types =====================
@@ -44,23 +61,23 @@ export type ServiceTile = {
 };
 
 export type ToolPreset = {
-  id: string;              // unique key
-  name: string;            // display name
+  id: string; // unique key
+  name: string; // display name
   kind: ServiceTile["kind"];
-  group: string;           // which row to appear in
-  defaultPort?: number;    // used to construct link if url not provided
-  docs?: string;           // link to docs (not rendered here by default)
+  group: string; // which row to appear in
+  defaultPort?: number; // used to construct link if url not provided
+  docs?: string; // link to docs (not rendered here by default)
   tags?: string[];
   icon?: React.ReactNode;
 };
 
 export type ToolConfig = {
   enabled: boolean;
-  url?: string;           // full url OR constructed from protocol+ip+port
+  url?: string; // full url OR constructed from protocol+ip+port
   ip?: string;
   port?: number;
   username?: string;
-  password?: string;      // DO NOT ship to a real client bundle in prod
+  password?: string; // DO NOT ship to a real client bundle in prod
   apiKey?: string;
 };
 
@@ -78,13 +95,21 @@ const genSpark = (n = 24) => Array.from({ length: n }, () => rand(20, 95));
 const LS_KEY = "homelabflix.config.v1";
 const LS_SETTINGS_KEY = "homelabflix.settings.v1";
 const loadConfig = (): Record<string, ToolConfig> => {
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch { return {}; }
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+  } catch {
+    return {};
+  }
 };
 const saveConfig = (cfg: Record<string, ToolConfig>) => localStorage.setItem(LS_KEY, JSON.stringify(cfg));
 
 const DEFAULT_SETTINGS: Settings = { autoRefresh: true, refreshMs: 30000, showSeedData: true };
 const loadSettings = (): Settings => {
-  try { return { ...DEFAULT_SETTINGS, ...(JSON.parse(localStorage.getItem(LS_SETTINGS_KEY) || "{}")) }; } catch { return DEFAULT_SETTINGS; }
+  try {
+    return { ...DEFAULT_SETTINGS, ...(JSON.parse(localStorage.getItem(LS_SETTINGS_KEY) || "{}")) };
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
 };
 const saveSettings = (s: Settings) => localStorage.setItem(LS_SETTINGS_KEY, JSON.stringify(s));
 
@@ -128,7 +153,19 @@ const CONNECTORS: Record<string, { label: string; fetch: () => Promise<ServiceTi
   seed: {
     label: "Seed",
     fetch: async () => [
-      { id: "seed-host", title: "Lab Host", kind: "host", tags: ["demo"], health: "up", cpuPct: rand(10, 40), memPct: rand(30, 60), spark: genSpark(), icon: <Server className="h-4 w-4" />, provider: "seed", group: "Hosts" },
+      {
+        id: "seed-host",
+        title: "Lab Host",
+        kind: "host",
+        tags: ["demo"],
+        health: "up",
+        cpuPct: rand(10, 40),
+        memPct: rand(30, 60),
+        spark: genSpark(),
+        icon: <Server className="h-4 w-4" />,
+        provider: "seed",
+        group: "Hosts",
+      },
     ],
   },
 };
@@ -149,7 +186,7 @@ function Metric({ icon, label, value, suffix }: { icon: React.ReactNode; label: 
     <div className="flex items-center gap-2 text-xs text-slate-400">
       <span className="inline-flex h-4 w-4 items-center justify-center">{icon}</span>
       <span>{label}:</span>
-      <span className="font-medium text-slate-200">{value !== undefined ? `${value}${suffix ?? ''}` : "—"}</span>
+      <span className="font-medium text-slate-200">{value !== undefined ? `${value}${suffix ?? ""}` : "—"}</span>
     </div>
   );
 }
@@ -171,11 +208,17 @@ function Spark({ data }: { data?: number[] }) {
 function ServiceCard({ t }: { t: ServiceTile }) {
   const incomplete = t.tags?.includes("needs-config");
   return (
-    <Card className={`group relative aspect-[16/9] w-[360px] shrink-0 overflow-hidden rounded-2xl border ${incomplete ? 'border-amber-600/40' : 'border-slate-800'} bg-[linear-gradient(180deg,rgba(17,24,39,0.9),rgba(2,6,23,0.9))] shadow-2xl backdrop-blur transition hover:scale-[1.01]`}>
+    <Card
+      className={`group relative aspect-[16/9] w-[360px] shrink-0 overflow-hidden rounded-2xl border ${
+        incomplete ? "border-amber-600/40" : "border-slate-800"
+      } bg-[linear-gradient(180deg,rgba(17,24,39,0.9),rgba(2,6,23,0.9))] shadow-2xl backdrop-blur transition hover:scale-[1.01]`}
+    >
       {incomplete && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-slate-950/70 text-center">
           <Badge className="bg-amber-500/15 text-amber-400">Needs config</Badge>
-          <div className="px-6 text-xs text-slate-300">Open <span className="font-medium">Quick setup</span> and add a URL or IP for this tool.</div>
+          <div className="px-6 text-xs text-slate-300">
+            Open <span className="font-medium">Quick setup</span> and add a URL or IP for this tool.
+          </div>
         </div>
       )}
       <div className="absolute right-3 top-3 z-20 flex items-center gap-2">
@@ -217,7 +260,9 @@ function ServiceCard({ t }: { t: ServiceTile }) {
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-1">
             {(t.tags ?? []).slice(0, 3).map((tag) => (
-              <Badge key={tag} className="bg-white/5 text-[10px] font-medium text-slate-300">{tag}</Badge>
+              <Badge key={tag} className="bg-white/5 text-[10px] font-medium text-slate-300">
+                {tag}
+              </Badge>
             ))}
           </div>
           <div className="flex items-center gap-2">
@@ -268,7 +313,9 @@ function Hero({ onRefresh }: { onRefresh: () => void }) {
             <ShieldCheck className="h-3 w-3" /> Homelabflix
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-red-500 md:text-4xl">HOMELABFLIX</h1>
-          <p className="mt-1 text-sm text-slate-300">Your homelab as binge‑able rows: Hosts, Containers, Network, Storage, Services.</p>
+          <p className="mt-1 text-sm text-slate-300">
+            Your homelab as binge-able rows: Hosts, Containers, Network, Storage, Services.
+          </p>
           <div className="mt-4 flex gap-2">
             <Button onClick={onRefresh} className="gap-2">
               <RefreshCcw className="h-4 w-4" /> Refresh data
@@ -287,7 +334,10 @@ function Hero({ onRefresh }: { onRefresh: () => void }) {
           </div>
           <div className="mt-3 h-16">
             <ResponsiveContainer>
-              <LineChart data={Array.from({ length: 32 }, (_, i) => ({ i, v: 80 + Math.sin(i / 2) * 8 }))} margin={{ left: 0, right: 0, top: 4, bottom: 0 }}>
+              <LineChart
+                data={Array.from({ length: 32 }, (_, i) => ({ i, v: 80 + Math.sin(i / 2) * 8 }))}
+                margin={{ left: 0, right: 0, top: 4, bottom: 0 }}
+              >
                 <Line type="monotone" dataKey="v" dot={false} strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -309,22 +359,39 @@ function SettingsPage({ settings, setSettings }: { settings: Settings; setSettin
         <div className="space-y-2">
           <Label>Auto-refresh</Label>
           <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3">
-            <Switch checked={settings.autoRefresh} onCheckedChange={(v) => setSettings({ ...settings, autoRefresh: v })} />
+            <Switch
+              checked={settings.autoRefresh}
+              onCheckedChange={(v) => setSettings({ ...settings, autoRefresh: v })}
+            />
             <span className="text-sm text-slate-300">Automatically refresh tiles</span>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Refresh interval (ms)</Label>
-          <Input type="number" min={1000} max={600000} step={1000} value={settings.refreshMs}
-            onChange={(e) => setSettings({ ...settings, refreshMs: Math.max(1000, Math.min(600000, Number(e.target.value))) })} />
+          <Input
+            type="number"
+            min={1000}
+            max={600000}
+            step={1000}
+            value={settings.refreshMs}
+            onChange={(e) =>
+              setSettings({
+                ...settings,
+                refreshMs: Math.max(1000, Math.min(600000, Number(e.target.value))),
+              })
+            }
+          />
           <div className="text-xs text-slate-500">Between 1s and 10m. Default 30000ms.</div>
         </div>
 
         <div className="space-y-2">
           <Label>Show demo seed data</Label>
           <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3">
-            <Switch checked={settings.showSeedData} onCheckedChange={(v) => setSettings({ ...settings, showSeedData: v })} />
+            <Switch
+              checked={settings.showSeedData}
+              onCheckedChange={(v) => setSettings({ ...settings, showSeedData: v })}
+            />
             <span className="text-sm text-slate-300">Keep a sample host so the UI never looks empty</span>
           </div>
         </div>
@@ -334,7 +401,15 @@ function SettingsPage({ settings, setSettings }: { settings: Settings; setSettin
         <Button onClick={() => saveSettings(settings)} className="gap-2">
           <SettingsIcon className="h-4 w-4" /> Save settings
         </Button>
-        <Button variant="outline" onClick={() => { localStorage.removeItem(LS_SETTINGS_KEY); setSettings(loadSettings()); }}>Reset</Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            localStorage.removeItem(LS_SETTINGS_KEY);
+            setSettings(loadSettings());
+          }}
+        >
+          Reset
+        </Button>
       </div>
     </div>
   );
@@ -373,13 +448,18 @@ function QuickConfigButton() {
 
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Quick‑configure popular tools</DialogTitle>
+          <DialogTitle>Quick-configure popular tools</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 text-sm">
           <div className="flex items-center justify-between">
-            <p className="text-slate-400">Toggle a tool and fill <span className="font-medium">URL or IP</span>, plus login/API. We only add tiles when required fields are set.</p>
-            <Button size="sm" variant="outline" onClick={enableAll}>Enable 20 presets</Button>
+            <p className="text-slate-400">
+              Toggle a tool and fill <span className="font-medium">URL or IP</span>, plus login/API. We only add tiles when
+              required fields are set.
+            </p>
+            <Button size="sm" variant="outline" onClick={enableAll}>
+              Enable 20 presets
+            </Button>
           </div>
 
           <Separator />
@@ -390,15 +470,28 @@ function QuickConfigButton() {
               const complete = isConfigured(c);
 
               return (
-                <div key={p.id} className={`rounded-2xl border ${complete ? 'border-slate-800 bg-slate-900/40' : 'border-amber-700/40 bg-amber-950/10'} p-3`}>
+                <div
+                  key={p.id}
+                  className={`rounded-2xl border ${
+                    complete ? "border-slate-800 bg-slate-900/40" : "border-amber-700/40 bg-amber-950/10"
+                  } p-3`}
+                >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-white/5">{p.icon ?? <Gauge className="h-4 w-4" />}</div>
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-white/5">
+                      {p.icon ?? <Gauge className="h-4 w-4" />}
+                    </div>
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
                         <div className="truncate font-medium text-slate-200">{p.name}</div>
                         <div className="flex items-center gap-3">
-                          <Badge className={`${complete ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>{complete ? 'Ready' : 'Needs URL or IP'}</Badge>
+                          <Badge
+                            className={`${
+                              complete ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"
+                            }`}
+                          >
+                            {complete ? "Ready" : "Needs URL or IP"}
+                          </Badge>
                           <div className="flex items-center gap-2">
                             <Switch checked={!!c.enabled} onCheckedChange={(v) => update(p.id, { enabled: v })} />
                             <span className="text-xs text-slate-400">Enabled</span>
@@ -409,15 +502,28 @@ function QuickConfigButton() {
                       <div className="mt-3 grid gap-2 md:grid-cols-12">
                         <div className="md:col-span-4">
                           <Label className="text-xs text-slate-400">Full URL (optional)</Label>
-                          <Input placeholder={`https://example.local:${p.defaultPort ?? 443}`} value={c.url || ""} onChange={(e) => update(p.id, { url: e.target.value })} />
+                          <Input
+                            placeholder={`https://example.local:${p.defaultPort ?? 443}`}
+                            value={c.url || ""}
+                            onChange={(e) => update(p.id, { url: e.target.value })}
+                          />
                         </div>
                         <div className="md:col-span-3">
                           <Label className="text-xs text-slate-400">IP / Host</Label>
-                          <Input placeholder="192.168.x.x" value={c.ip || ""} onChange={(e) => update(p.id, { ip: e.target.value })} />
+                          <Input
+                            placeholder="192.168.x.x"
+                            value={c.ip || ""}
+                            onChange={(e) => update(p.id, { ip: e.target.value })}
+                          />
                         </div>
                         <div className="md:col-span-2">
                           <Label className="text-xs text-slate-400">Port</Label>
-                          <Input type="number" placeholder={(p.defaultPort || 443).toString()} value={c.port ?? p.defaultPort ?? 443} onChange={(e) => update(p.id, { port: Number(e.target.value) })} />
+                          <Input
+                            type="number"
+                            placeholder={(p.defaultPort || 443).toString()}
+                            value={c.port ?? p.defaultPort ?? 443}
+                            onChange={(e) => update(p.id, { port: Number(e.target.value) })}
+                          />
                         </div>
                         <div className="md:col-span-3">
                           <Label className="text-xs text-slate-400">Username</Label>
@@ -426,17 +532,33 @@ function QuickConfigButton() {
                         <div className="md:col-span-3">
                           <Label className="text-xs text-slate-400">Password</Label>
                           <div className="relative">
-                            <Input type={reveal ? "text" : "password"} value={c.password || ""} onChange={(e) => update(p.id, { password: e.target.value })} />
-                            <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" type="button" onClick={() => setReveal((r) => !r)}>{reveal ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+                            <Input
+                              type={reveal ? "text" : "password"}
+                              value={c.password || ""}
+                              onChange={(e) => update(p.id, { password: e.target.value })}
+                            />
+                            <button
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
+                              type="button"
+                              onClick={() => setReveal((r) => !r)}
+                            >
+                              {reveal ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
                           </div>
                         </div>
                         <div className="md:col-span-3">
                           <Label className="text-xs text-slate-400">API Key</Label>
-                          <Input placeholder="paste key…" value={c.apiKey || ""} onChange={(e) => update(p.id, { apiKey: e.target.value })} />
+                          <Input
+                            placeholder="paste key…"
+                            value={c.apiKey || ""}
+                            onChange={(e) => update(p.id, { apiKey: e.target.value })}
+                          />
                         </div>
                       </div>
 
-                      <div className="mt-2 text-[10px] uppercase tracking-wide text-slate-500">Row: {p.group} · Type: {p.kind}</div>
+                      <div className="mt-2 text-[10px] uppercase tracking-wide text-slate-500">
+                        Row: {p.group} · Type: {p.kind}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -446,7 +568,9 @@ function QuickConfigButton() {
 
           <Separator />
           <div className="flex items-center justify-end gap-2">
-            <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={save}>Save</Button>
           </div>
         </div>
@@ -507,13 +631,18 @@ export default function Homelabflix() {
   useEffect(() => {
     saveSettings(settings);
     if (!settings.autoRefresh) return;
-    const id = setInterval(() => { refresh(); }, settings.refreshMs);
+    const id = setInterval(() => {
+      refresh();
+    }, settings.refreshMs);
     return () => clearInterval(id);
   }, [settings]);
 
   const filtered = useMemo(() => {
     return all.filter((t) => {
-      const hitQ = q ? (t.title.toLowerCase().includes(q.toLowerCase()) || (t.tags ?? []).some((x) => x.toLowerCase().includes(q.toLowerCase()))) : true;
+      const hitQ = q
+        ? t.title.toLowerCase().includes(q.toLowerCase()) ||
+          (t.tags ?? []).some((x) => x.toLowerCase().includes(q.toLowerCase()))
+        : true;
       const hitKind = kind === "all" ? true : t.kind === kind;
       return hitQ && hitKind;
     });
@@ -527,12 +656,31 @@ export default function Homelabflix() {
     { title: "Services", filter: (t) => t.group === "Services" },
   ];
 
+  // Decide which rows to show based on the active tab
+  const rowsToRender = useMemo(() => {
+    if (tab === "hosts") return ROWS.filter((r) => r.title === "Hosts");
+    if (tab === "containers") return ROWS.filter((r) => r.title === "Containers");
+    if (tab === "services") return ROWS.filter((r) => r.title === "Services");
+    return ROWS;
+  }, [tab]);
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_10%_10%,#0b1220_0%,#060b16_40%,#050a14_100%)] p-4 text-slate-100">
+    <div className="min-h-screen w-screen bg-[radial-gradient(circle_at_10%_10%,#0b1220_0%,#060b16_40%,#050a14_100%)] p-4 text-slate-100">
       <nav className="mb-4 flex items-center gap-3">
         <div className="text-2xl font-black tracking-tight text-red-500 drop-shadow">HOMELABFLIX</div>
 
-        <Tabs value={tab} onValueChange={setTab} className="ml-4">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => {
+            setTab(v);
+            // Keep the "Type" dropdown in sync with the tab for intuitive filtering
+            if (v === "hosts") setKind("host");
+            else if (v === "containers") setKind("container");
+            else if (v === "services") setKind("service");
+            else setKind("all");
+          }}
+          className="ml-4"
+        >
           <TabsList className="bg-white/5">
             <TabsTrigger value="browse">All</TabsTrigger>
             <TabsTrigger value="hosts">Hosts</TabsTrigger>
@@ -568,7 +716,7 @@ export default function Homelabflix() {
         <>
           <Hero onRefresh={refresh} />
           <div className="mt-4">
-            {ROWS.map(({ title, filter }) => (
+            {rowsToRender.map(({ title, filter }) => (
               <Row key={title} title={title} items={filtered.filter(filter)} />
             ))}
           </div>
@@ -576,9 +724,9 @@ export default function Homelabflix() {
       )}
 
       <footer className="mt-10 grid gap-2 text-xs text-slate-500 md:grid-cols-3">
-        <div>⚙️ Quick‑config covers 20 popular tools. Add more in PRESETS.</div>
-        <div>🔒 For production, move credentials server‑side and issue scoped tokens.</div>
-        <div>© 2025 Homelabflix — quick‑config + settings</div>
+        <div>⚙️ Quick-config covers 20 popular tools. Add more in PRESETS.</div>
+        <div>🔒 For production, move credentials server-side and issue scoped tokens.</div>
+        <div>© 2025 Homelabflix — quick-config + settings</div>
       </footer>
     </div>
   );

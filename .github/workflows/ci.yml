@@ -1,0 +1,34 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+
+      # Server
+      - name: Install server
+        working-directory: server
+        run: npm ci
+      - name: Build server
+        working-directory: server
+        run: npm run build
+
+      # Client
+      - name: Install client
+        working-directory: client
+        run: npm ci
+      - name: Typecheck client
+        working-directory: client
+        run: npm run typecheck || npx tsc --noEmit
+      - name: Lint client
+        working-directory: client
+        run: npm run lint || npx eslint .
+      - name: Build client
+        working-directory: client
+        run: npm run build
