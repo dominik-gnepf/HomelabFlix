@@ -5,11 +5,15 @@
     "moduleResolution": "node",
     "rootDir": "src",
     "outDir": "dist",
+
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
 
-    /* IMPORTANT: allow TS to transform ESM imports to CJS */
+    // ✅ Include modern JS built-ins (Map, Set, Symbol, Iterable, WeakMap, etc.)
+    "lib": ["ES2020"],
+
+    // Keep TS free to transform ESM imports → CJS for Node
     "verbatimModuleSyntax": false
   },
   "include": ["src"],
