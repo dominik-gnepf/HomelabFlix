@@ -140,8 +140,3 @@ git checkout -b feature/my-new-feature
 
 MIT License © 2025 Dominik Gnepf
 ```
-
----
-
-If you want, I can also **add this README into your repo right now** so it’s ready for the first push.  
-Do you want me to prepare that so we commit it with the initial code?
