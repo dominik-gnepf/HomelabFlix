@@ -1,7 +1,3 @@
-Here’s a **production-ready README.md** for your **HomelabFlix** repo that explains what it is, how to set it up locally, and where it’s heading.  
-
----
-
 ```markdown
 # 🎬 HomelabFlix
 
