@@ -1,45 +1,35 @@
+
 name: CI
 on:
-  pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            client/package-lock.json
-            server/package-lock.json
-
-      # Server
-      - name: Install server
-        working-directory: server
-        run: npm ci
-
-      - name: Build server
-        working-directory: server
-        run: npm run build
-
-      # Client
-      - name: Install client
-        working-directory: client
-        run: npm ci
-
+      - name: Install dependencies (all)
+        run: |
+          npm install --workspaces
       - name: Typecheck client
-        working-directory: client
-        run: npm run typecheck || npx tsc --noEmit
-
+        run: |
+          cd client
+          npm run typecheck || npx tsc --noEmit
       - name: Lint client
-        working-directory: client
-        run: npm run lint || npx eslint .
-
+        run: |
+          cd client
+          npm run lint || npx eslint .
       - name: Build client
-        working-directory: client
-        run: npm run build
+        run: |
+          cd client
+          npm run build
+      - name: Build server
+        run: |
+          cd server
+          npm run build
