@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+  "noEmit": true,
   "target": "ESNext",
   "lib": ["ESNext", "DOM"],
   "allowSyntheticDefaultImports": true,
@@ -7,7 +8,12 @@
   "moduleResolution": "nodenext",
   "module": "NodeNext",
   "types": ["node"],
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@/components/*": ["components/*"],
+      "@/lib/*": ["lib/*"]
+    },
+    "allowImportingTsExtensions": true,
   }
 }
