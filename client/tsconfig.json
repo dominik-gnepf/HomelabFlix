@@ -8,11 +8,11 @@
   "moduleResolution": "nodenext",
   "module": "NodeNext",
   "types": ["node"],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@/components/*": ["components/*"],
-      "@/lib/*": ["lib/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/lib/*": ["src/lib/*"]
     },
     "allowImportingTsExtensions": true,
   }
