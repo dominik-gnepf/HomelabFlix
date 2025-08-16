@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fastify/cors": "^9.0.0",
+    "@fastify/cors": "^11.1.0",
     "dotenv": "^17.2.1",
     "fastify": "^4.28.1"
   },
