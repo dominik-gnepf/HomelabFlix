@@ -9,8 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --ext .ts,.tsx src",
-    "format": "prettier --write .",
-    "postinstall": "patch-package"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

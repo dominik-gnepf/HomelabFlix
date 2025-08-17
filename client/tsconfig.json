@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-  "noEmit": true,
-  "target": "ESNext",
-  "lib": ["ESNext", "DOM"],
-  "allowSyntheticDefaultImports": true,
-  "jsx": "react-jsx",
-  "moduleResolution": "nodenext",
-  "module": "NodeNext",
-  "types": ["node"],
+    "noEmit": true,
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -15,5 +15,6 @@
       "@/lib/*": ["src/lib/*"]
     },
     "allowImportingTsExtensions": true,
+    "skipLibCheck": true
   }
 }

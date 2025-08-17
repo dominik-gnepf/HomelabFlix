@@ -16,10 +16,7 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: |
-          # Install base dependencies first
           cd client
-          npm install recharts@3.1.2 --save-exact
-          # Now install remaining dependencies
           npm install
           cd ../server
           npm install
