@@ -11,5 +11,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0"
+  },
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions"
   }
 }
