@@ -1,4 +1,4 @@
-# 🎬 HomelabFlix
+# 🎬 HomelabFlix V0.049
 
 A **Netflix-style dashboard** for your Homelab — monitor containers, network gear, and services with a slick, tile-based UI.  
 Designed for **easy integration**: just add the IP, login, and/or API key for a tool, and HomelabFlix will start monitoring it.
