@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -648,21 +648,21 @@ export default function Homelabflix() {
     });
   }, [all, q, kind]);
 
-  const ROWS: { title: string; filter: (t: ServiceTile) => boolean }[] = [
-    { title: "Hosts", filter: (t) => t.group === "Hosts" },
-    { title: "Containers", filter: (t) => t.group === "Containers" },
-    { title: "Network", filter: (t) => t.group === "Network" },
-    { title: "Storage", filter: (t) => t.group === "Storage" },
-    { title: "Services", filter: (t) => t.group === "Services" },
-  ];
-
   // Decide which rows to show based on the active tab
   const rowsToRender = useMemo(() => {
+    const ROWS = [
+      { title: "Hosts", filter: (t: ServiceTile) => t.group === "Hosts" },
+      { title: "Containers", filter: (t: ServiceTile) => t.group === "Containers" },
+      { title: "Network", filter: (t: ServiceTile) => t.group === "Network" },
+      { title: "Storage", filter: (t: ServiceTile) => t.group === "Storage" },
+      { title: "Services", filter: (t: ServiceTile) => t.group === "Services" },
+    ];
+
     if (tab === "hosts") return ROWS.filter((r) => r.title === "Hosts");
     if (tab === "containers") return ROWS.filter((r) => r.title === "Containers");
     if (tab === "services") return ROWS.filter((r) => r.title === "Services");
     return ROWS;
-  }, [tab, ROWS]);
+  }, [tab]);
 
   return (
     <div className="min-h-screen w-screen bg-[radial-gradient(circle_at_10%_10%,#0b1220_0%,#060b16_40%,#050a14_100%)] p-4 text-slate-100">
