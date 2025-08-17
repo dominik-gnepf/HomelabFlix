@@ -635,7 +635,7 @@ export default function Homelabflix() {
       refresh();
     }, settings.refreshMs);
     return () => clearInterval(id);
-  }, [settings]);
+  }, [settings, refresh]);
 
   const filtered = useMemo(() => {
     return all.filter((t) => {
@@ -662,7 +662,7 @@ export default function Homelabflix() {
     if (tab === "containers") return ROWS.filter((r) => r.title === "Containers");
     if (tab === "services") return ROWS.filter((r) => r.title === "Services");
     return ROWS;
-  }, [tab]);
+  }, [tab, ROWS]);
 
   return (
     <div className="min-h-screen w-screen bg-[radial-gradient(circle_at_10%_10%,#0b1220_0%,#060b16_40%,#050a14_100%)] p-4 text-slate-100">
