@@ -18,9 +18,8 @@ jobs:
         run: |
           npm install --workspaces
       - name: Typecheck client
-        run: |
-          cd client
-          npm run typecheck || npx tsc --noEmit
+        working-directory: client
+        run: npx tsc --noEmit -p tsconfig.json
       - name: Lint client
         run: |
           cd client
