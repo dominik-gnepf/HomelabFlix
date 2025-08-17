@@ -5,8 +5,8 @@
     "lib": ["ESNext", "DOM"],
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
-    "moduleResolution": "bundler",
-    "module": "NodeNext",
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
