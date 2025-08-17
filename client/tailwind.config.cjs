@@ -59,7 +59,7 @@ export default {
     }
   },
   plugins: [
-    plugin(({ addUtilities }) => {
+    animate(({ addUtilities }) => {
       addUtilities({
         ".animate-in": {
           animation: "enter 0.2s ease-out"
