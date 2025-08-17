@@ -7,7 +7,7 @@
     "redux": "^4.2.1"
   },
   "resolutions": {
-    "redux": "^4.2.1"
+    "redux": "4.2.1"
   },
   "devDependencies": {
     "@types/node": "^24.3.0"

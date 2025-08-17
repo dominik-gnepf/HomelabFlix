@@ -1,0 +1,22 @@
+diff --git a/node_modules/recharts/types/state/store.d.ts b/node_modules/recharts/types/state/store.d.ts
+index 1234567..89abcde 100644
+--- a/node_modules/recharts/types/state/store.d.ts
++++ b/node_modules/recharts/types/state/store.d.ts
+@@ -1,6 +1,6 @@
+ import { PreState } from './types';
+-import { CombinedState } from 'redux';
+-type RechartsState = CombinedState<PreState>;
++type RechartsState = PreState;
+ export declare const getGlobalState: () => RechartsState;
+ export declare const setGlobalState: (state: PreState) => void;
+ export {};
+diff --git a/node_modules/recharts/types/state/selectors/axisSelectors.d.ts b/node_modules/recharts/types/state/selectors/axisSelectors.d.ts
+index abcdef..1234567 100644
+--- a/node_modules/recharts/types/state/selectors/axisSelectors.d.ts
++++ b/node_modules/recharts/types/state/selectors/axisSelectors.d.ts
+@@ -1,5 +1,4 @@
+ import { PreState } from '../types';
+-import { EmptyObject } from 'redux';
+ interface AxisState {
+     // ... existing content
+ }
