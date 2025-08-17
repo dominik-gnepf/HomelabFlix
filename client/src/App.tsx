@@ -615,12 +615,12 @@ export default function Homelabflix() {
     return tiles;
   };
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     const batches = await Promise.all(Object.values(CONNECTORS).map((c) => c.fetch()));
     const configured = makeTilesFromConfig();
     const seed = settings.showSeedData ? batches.flat() : [];
     setAll([...configured, ...seed]);
-  };
+  }, [settings.showSeedData, makeTilesFromConfig]);
 
   useEffect(() => {
     refresh();
