@@ -304,7 +304,7 @@ function Row({ title, items }: { title: string; items: ServiceTile[] }) {
   );
 }
 
-function Hero({ onRefresh }: { onRefresh: () => void }) {
+function Hero({ onRefresh, onConfigSaved }: { onRefresh: () => void; onConfigSaved: () => void }) {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-[radial-gradient(circle_at_10%_20%,rgba(239,68,68,0.18),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.12),transparent_35%),linear-gradient(180deg,rgba(2,6,23,0.75),rgba(2,6,23,0.95))] p-6 shadow-2xl">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -320,7 +320,7 @@ function Hero({ onRefresh }: { onRefresh: () => void }) {
             <Button onClick={onRefresh} className="gap-2">
               <RefreshCcw className="h-4 w-4" /> Refresh data
             </Button>
-            <QuickConfigButton />
+            <QuickConfigButton onSaved={onConfigSaved} />
           </div>
         </div>
         <div className="min-w-[260px] rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -416,7 +416,7 @@ function SettingsPage({ settings, setSettings }: { settings: Settings; setSettin
 }
 
 // ===================== Quick Config =====================
-function QuickConfigButton() {
+function QuickConfigButton({ onSaved }: { onSaved: () => void }) {
   const [open, setOpen] = useState(false);
   const [cfg, setCfg] = useState<Record<string, ToolConfig>>(() => loadConfig());
   const [reveal, setReveal] = useState(false);
@@ -436,6 +436,7 @@ function QuickConfigButton() {
   const save = () => {
     saveConfig(cfg);
     setOpen(false);
+    onSaved();
   };
 
   return (
@@ -660,6 +661,8 @@ export default function Homelabflix() {
 
     if (tab === "hosts") return ROWS.filter((r) => r.title === "Hosts");
     if (tab === "containers") return ROWS.filter((r) => r.title === "Containers");
+    if (tab === "network") return ROWS.filter((r) => r.title === "Network");
+    if (tab === "storage") return ROWS.filter((r) => r.title === "Storage");
     if (tab === "services") return ROWS.filter((r) => r.title === "Services");
     return ROWS;
   }, [tab]);
@@ -676,6 +679,8 @@ export default function Homelabflix() {
             // Keep the "Type" dropdown in sync with the tab for intuitive filtering
             if (v === "hosts") setKind("host");
             else if (v === "containers") setKind("container");
+            else if (v === "network") setKind("network");
+            else if (v === "storage") setKind("host");
             else if (v === "services") setKind("service");
             else setKind("all");
           }}
@@ -685,6 +690,8 @@ export default function Homelabflix() {
             <TabsTrigger value="browse">All</TabsTrigger>
             <TabsTrigger value="hosts">Hosts</TabsTrigger>
             <TabsTrigger value="containers">Containers</TabsTrigger>
+            <TabsTrigger value="network">Network</TabsTrigger>
+            <TabsTrigger value="storage">Storage</TabsTrigger>
             <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
@@ -714,7 +721,7 @@ export default function Homelabflix() {
         <SettingsPage settings={settings} setSettings={(s) => { setSettings(s); saveSettings(s); }} />
       ) : (
         <>
-          <Hero onRefresh={refresh} />
+          <Hero onRefresh={refresh} onConfigSaved={refresh} />
           <div className="mt-4">
             {rowsToRender.map(({ title, filter }) => (
               <Row key={title} title={title} items={filtered.filter(filter)} />
