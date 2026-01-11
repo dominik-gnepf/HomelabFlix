@@ -430,9 +430,15 @@ function QuickConfigButton({ onSaved }: { onSaved: () => void }) {
   const enableAll = () => {
     const next: Record<string, ToolConfig> = { ...cfg };
     PRESETS.forEach((p) => {
-      next[p.id] = { enabled: true, port: p.defaultPort, ...(next[p.id] || {}) };
-    });
-    setCfg(next);
+      const current = next[p.id] || {};
+      next[p.id] = {
+        ...current,
+        enabled: current.enabled ?? true,
+        port: current.port ?? p.defaultPort,
+  };
+});
+setCfg(next);
+
   };
 
   const save = () => {
