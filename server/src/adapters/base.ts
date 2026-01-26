@@ -1,4 +1,4 @@
-import type { TileData, IntegrationConfig, AdapterMetadata, ConfigField } from '../../../packages/types/index.js';
+import type { TileData, IntegrationConfig, AdapterMetadata, ConfigField, Metric } from '../../../packages/types/index.js';
 
 export interface Adapter {
   metadata: AdapterMetadata;
@@ -28,7 +28,7 @@ export abstract class BaseAdapter implements Adapter {
     name: string,
     category: string,
     status: 'online' | 'offline' | 'warning' | 'unknown',
-    metrics: Array<{ label: string; value: string | number; unit?: string; type?: string }>
+    metrics: Metric[]
   ): TileData {
     return {
       id,

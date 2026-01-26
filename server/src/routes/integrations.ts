@@ -44,9 +44,9 @@ export async function integrationsRoutes(
   });
 
   // Get single integration
-  fastify.get('/:id', {
+  fastify.get<{ Params: { id: string } }>('/:id', {
     onRequest: [fastify.authenticate],
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, async (request, reply) => {
     try {
       const integration = await prisma.integration.findFirst({
         where: {
@@ -111,9 +111,9 @@ export async function integrationsRoutes(
   });
 
   // Update integration
-  fastify.put('/:id', {
+  fastify.put<{ Params: { id: string } }>('/:id', {
     onRequest: [fastify.authenticate],
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, async (request, reply) => {
     try {
       const { name, config, enabled } = updateIntegrationSchema.parse(request.body);
 
@@ -160,9 +160,9 @@ export async function integrationsRoutes(
   });
 
   // Delete integration
-  fastify.delete('/:id', {
+  fastify.delete<{ Params: { id: string } }>('/:id', {
     onRequest: [fastify.authenticate],
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, async (request, reply) => {
     try {
       const integration = await prisma.integration.findFirst({
         where: {
@@ -187,9 +187,9 @@ export async function integrationsRoutes(
   });
 
   // Get integration metrics
-  fastify.get('/:id/metrics', {
+  fastify.get<{ Params: { id: string } }>('/:id/metrics', {
     onRequest: [fastify.authenticate],
-  }, async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+  }, async (request, reply) => {
     try {
       const integration = await prisma.integration.findFirst({
         where: {
@@ -230,7 +230,7 @@ export async function integrationsRoutes(
   // List available adapters
   fastify.get('/adapters/list', {
     onRequest: [fastify.authenticate],
-  }, async (request: FastifyRequest, reply: FastifyReply) => {
+  }, async (_request, reply) => {
     try {
       return adapterRegistry.getAdapterMetadata();
     } catch (error) {
