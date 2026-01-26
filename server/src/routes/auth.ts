@@ -16,7 +16,14 @@ const registerSchema = z.object({
 
 export async function authRoutes(fastify: FastifyInstance) {
   // Login
-  fastify.post('/login', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.post('/login', {
+    config: {
+      rateLimit: {
+        max: 10,
+        timeWindow: '15 minutes',
+      },
+    },
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { username, password } = loginSchema.parse(request.body);
 
@@ -52,7 +59,14 @@ export async function authRoutes(fastify: FastifyInstance) {
   });
 
   // Register
-  fastify.post('/register', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.post('/register', {
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: '15 minutes',
+      },
+    },
+  }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const { username, email, password } = registerSchema.parse(request.body);
 
