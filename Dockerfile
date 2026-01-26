@@ -10,8 +10,8 @@ RUN npm ci
 COPY server/ ./
 COPY packages/ ../packages/
 
-RUN npm run build
 RUN npm run db:generate
+RUN npm run build
 
 # Stage 2: Build client  
 FROM node:20-alpine AS client-builder
@@ -47,7 +47,6 @@ COPY --from=server-builder /app/server/prisma ./server/prisma
 COPY --from=client-builder /app/client/.next ./client/.next
 COPY --from=client-builder /app/client/node_modules ./client/node_modules
 COPY --from=client-builder /app/client/package.json ./client/
-COPY --from=client-builder /app/client/public ./client/public 2>/dev/null || true
 
 # Copy startup script
 COPY docker/start.sh ./

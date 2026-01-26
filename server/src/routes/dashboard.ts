@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { Integration } from '@prisma/client';
 import prisma from '../lib/database.js';
 import { EncryptionService } from '../lib/encryption.js';
 import { adapterRegistry } from '../adapters/index.js';
@@ -20,7 +21,7 @@ export async function dashboardRoutes(
       });
 
       // Fetch metrics for all integrations in parallel
-      const metricsPromises = integrations.map(async (integration) => {
+      const metricsPromises = integrations.map(async (integration: Integration) => {
         try {
           const adapter = adapterRegistry.getAdapter(integration.adapterId);
           if (!adapter) {

@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { Integration } from '@prisma/client';
 import { z } from 'zod';
 import prisma from '../lib/database.js';
 import { EncryptionService } from '../lib/encryption.js';
@@ -31,7 +32,7 @@ export async function integrationsRoutes(
       });
 
       // Decrypt config for each integration
-      const decryptedIntegrations = integrations.map(integration => ({
+      const decryptedIntegrations = integrations.map((integration: Integration) => ({
         ...integration,
         config: encryptionService.decryptObject(integration.config),
       }));

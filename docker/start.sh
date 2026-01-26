@@ -11,7 +11,7 @@ npx prisma migrate deploy || echo "⚠️  Migrations failed or no migrations to
 # Start server in background
 echo "🔧 Starting backend server..."
 cd /app/server
-node dist/index.js &
+node dist/server/src/index.js &
 SERVER_PID=$!
 
 # Start client
