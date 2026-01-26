@@ -1,141 +1,158 @@
-# 🎬 HomelabFlix V0.049
+# HomelabFlix 🏠🎬
 
-A **Netflix-style dashboard** for your Homelab — monitor containers, network gear, and services with a slick, tile-based UI.  
-Designed for **easy integration**: just add the IP, login, and/or API key for a tool, and HomelabFlix will start monitoring it.
+**Netflix-style dashboard for your homelab** - Monitor all your self-hosted services in one beautiful interface.
 
----
+## Features
 
-## 🚀 Features
+✨ **Netflix-inspired UI** - Dark theme with smooth animations  
+🔌 **20+ Adapters** - Proxmox, Portainer, UniFi, OPNsense, and more  
+🔒 **Secure** - AES-256-GCM encryption, JWT auth  
+📊 **Real-time** - Auto-refreshing metrics  
+🐳 **Docker** - Single container deployment  
+🚀 **Production Ready** - TypeScript, tests, health checks  
 
-- **Beautiful Netflix-like UI** built with React + Tailwind + shadcn/ui
-- **20+ popular homelab tools** ready to configure out of the box
-- **Easy Quick-Setup** — add IP, credentials, and API keys in seconds
-- **Settings Page** to control refresh rate and display preferences
-- **Fastify Backend** for API aggregation & secure credential storage
-- **Extensible** — easily add new tools, metrics, or widgets
-- **Production-ready structure** (`client` + `server` folders)
+## Quick Start
 
----
-
-## 📂 Project Structure
-
-```plaintext
-homelabflix/
-├── client/         # React + Vite front-end
-│   ├── src/
-│   └── vite.config.ts
-├── server/         # Fastify backend
-│   ├── src/
-│   └── .env.example
-├── public/
-├── README.md
-└── package.json
-```
-
----
-
-## 🛠️ Tech Stack
-
-**Frontend**
-- [React](https://react.dev/) + [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/) components
-
-**Backend**
-- [Fastify](https://fastify.dev/) API server
-- [@fastify/cors](https://github.com/fastify/fastify-cors) for cross-origin requests
-- [dotenv](https://github.com/motdotla/dotenv) for environment variables
-
----
-
-## ⚡ Quick Start
-
-### 1️⃣ Clone the Repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/HomelabFlix.git
+# 1. Clone
+git clone https://github.com/yourusername/HomelabFlix.git
 cd HomelabFlix
-```
 
-### 2️⃣ Setup the Server
-```bash
-cd server
+# 2. Configure
 cp .env.example .env
-npm install
-npm run dev
+# Edit .env - set JWT_SECRET, ENCRYPTION_KEY, POSTGRES_PASSWORD
+
+# 3. Generate secure keys
+openssl rand -base64 32  # For JWT_SECRET
+openssl rand -base64 32  # For ENCRYPTION_KEY
+
+# 4. Start
+docker-compose up -d
+
+# 5. Access
+# Frontend: http://localhost:3000
+# Backend: http://localhost:3001
 ```
-By default, the API runs at `http://localhost:8787`
 
-### 3️⃣ Setup the Client
-```bash
-cd ../client
-npm install
-npm run dev
+## Supported Integrations
+
+### ✅ Implemented
+- **Uptime Kuma** - Monitoring
+- **Portainer** - Docker containers
+- **Proxmox VE** - VMs and containers
+- **OPNsense** - Firewall
+- **UniFi Network** - Network devices
+
+### 🚧 Coming Soon
+Pi-hole, TrueNAS, Synology, Plex, Jellyfin, Emby, Home Assistant, AdGuard, Grafana, Prometheus, Nextcloud, Minecraft, Nginx Proxy Manager, Caddy, Traefik
+
+## Architecture
+
 ```
-The frontend runs at `http://localhost:5173` and proxies `/api` calls to the server.
+HomelabFlix/
+├── client/          # Next.js (port 3000)
+├── server/          # Fastify (port 3001)
+├── packages/types/  # Shared types
+└── docker/          # Docker config
+```
 
----
-
-## ⚙️ Configuration
-
-1. Open the **Settings Page** in the UI.
-2. Add IP addresses, credentials, and/or API keys for your tools.
-3. Choose refresh intervals and other preferences.
-4. Done — tiles start updating automatically.
-
----
-
-## 🧩 Supported Tools (Initial 20)
-- Proxmox
-- TrueNAS
-- Docker
-- Portainer
-- Grafana
-- Prometheus
-- Uptime Kuma
-- Pi-hole
-- Home Assistant
-- Nginx Proxy Manager
-- ... and more (full list in `/server/config/tools.ts`)
-
----
-
-## 📦 Building for Production
+## Development
 
 ```bash
-# Server
-cd server
-npm run build
+# Install
+cd server && npm install
+cd ../client && npm install
 
-# Client
-cd ../client
-npm run build
+# Database
+cd server && npm run db:push
+
+# Run
+cd server && npm run dev  # Terminal 1
+cd client && npm run dev  # Terminal 2
+
+# Test
+cd server && npm test
 ```
 
-Deploy the `/server/dist` folder along with `/client/dist` on your preferred environment.
+## Adding New Adapter
 
----
+```typescript
+// server/src/adapters/my-service.ts
+import { BaseAdapter } from './base.js';
 
-## 🛣️ Roadmap
+export class MyServiceAdapter extends BaseAdapter {
+  metadata = {
+    id: 'my-service',
+    name: 'My Service',
+    category: 'Apps',
+    configSchema: {
+      url: { type: 'url', label: 'URL', required: true },
+      apiKey: { type: 'password', label: 'API Key', required: true },
+    },
+    implemented: true,
+  };
 
-- 🔐 Secure credential storage & encryption
-- 📡 Real-time tile updates with SSE/WebSockets
-- 🖥️ More connectors & monitoring integrations
-- 📱 Mobile-friendly UI
-- 🌐 Multi-user support
+  async fetchMetrics(config) {
+    // Fetch from your service API
+    return this.createTileData(config.id, config.name, 'Apps', 'online', [
+      { label: 'Status', value: 'Running' },
+    ]);
+  }
+}
+```
 
----
+Register in `server/src/adapters/index.ts`.
 
-## 🤝 Contributing
+## Security
 
-Pull requests are welcome!  
-Please fork the repo and create a feature branch:
+- **Encryption**: AES-256-GCM for secrets
+- **Auth**: JWT + rate limiting
+- **Passwords**: Bcrypt (12 rounds)
+
+**Best Practices:**
+- Use strong, unique keys
+- Never commit `.env`
+- Backup database regularly
+- Use HTTPS in production
+
+### Backup Database
+
 ```bash
-git checkout -b feature/my-new-feature
+docker exec homelabflix-db pg_dump -U homelabflix homelabflix > backup.sql
+docker exec -i homelabflix-db psql -U homelabflix homelabflix < backup.sql
 ```
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection |
+| `JWT_SECRET` | Yes | JWT key (32+ chars) |
+| `ENCRYPTION_KEY` | Yes | Encryption key (32+ chars) |
+| `POSTGRES_PASSWORD` | Yes | DB password |
+
+## Troubleshooting
+
+```bash
+# Check services
+docker ps
+
+# View logs
+docker logs homelabflix-app
+docker logs homelabflix-db
+
+# Reset
+docker-compose down -v && docker-compose up -d
+```
+
+## Contributing
+
+PRs welcome! Priority: implementing adapters, tests, UI/UX, docs.
+
+## License
+
+MIT - see [LICENSE](LICENSE)
 
 ---
 
-## 📜 License
-
-MIT License © 2025 Dominik Gnepf
-```
+Made with ❤️ for the homelab community
